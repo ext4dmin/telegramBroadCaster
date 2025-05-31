@@ -1,3 +1,10 @@
+.vscode/
+*.session
+*.jpg
+*.jpeg
+*.png
+chats.csv
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

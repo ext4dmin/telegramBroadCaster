@@ -17,71 +17,71 @@ logger = logging.getLogger(__name__)
 
 
 def prompt_yes_no_cancel(prompt: str) -> str:
-    """Возвращает 'y', 'n' или 'c'."""
+    """Returns 'y', 'n' or 'c'."""
     ans = input(f"{prompt} (y/N/Cancel(c)): ").strip().lower()
     if ans == 'c': return 'c'
     return 'y' if ans == 'y' else 'n'
 
 
 def interactive_input():
-    # Шаг 1: желание рассылки
+    # Step 1: broadcast intent
     while True:
-        start = input('Желаете сделать рассылку? (y/N): ').strip().lower()
+        start = input('Do you want to start a broadcast? (y/N): ').strip().lower()
         if start != 'y':
-            print('Выход из приложения.')
+            print('Exiting application.')
             sys.exit(0)
 
-        # Шаг 2: ввод текста
+        # Step 2: enter message text
         while True:
-            text = input('Введите текст сообщения: ').strip()
-            choice = prompt_yes_no_cancel(f"Текст: {text}\nПравильно?")
+            text = input('Enter message text: ').strip()
+            choice = prompt_yes_no_cancel(f"Text: {text}\nIs this correct?")
             if choice == 'c':
-                break  # назад к шагу 1
+                break  # back to step 1
             if choice == 'y':
-                break  # далее
-            # else: повтор ввода текста
+                break  # next
+            # else: re-enter text
         if choice == 'c':
             continue
 
-        # Шаг 3: добавление изображения
+        # Step 3: add image
         image_path = None
         while True:
-            img_choice = prompt_yes_no_cancel('Добавить изображение?')
+            img_choice = prompt_yes_no_cancel('Add an image?')
             if img_choice == 'c':
-                break  # назад к шагу 1
+                break  # back to step 1
             if img_choice == 'n':
-                break  # без изображения
-            # если 'y'
+                break  # no image
+            # if 'y'
             while True:
-                path = input('Укажите путь к изображению: ').strip()
-                confirm = prompt_yes_no_cancel(f"Путь: {path}\nПравильно?")
+                path = input('Enter image path: ').strip()
+                confirm = prompt_yes_no_cancel(f"Path: {path}\nIs this correct?")
                 if confirm == 'c':
-                    break  # назад к шагу 1
+                    break  # back to step 1
                 if confirm == 'y':
                     image_path = path
-                    break  # изображение подтверждено
-                # else: запрашиваем путь снова
+                    break  # image confirmed
+                # else: re-enter path
             if confirm == 'c':
                 break
-            # изображение либо загружено, либо отказ
+            # image either loaded or declined
             break
         if img_choice == 'c' or ('confirm' in locals() and confirm == 'c'):
             continue
 
-        # Шаг 4: сохраняем в БД
+        # Step 4: save to DB
         msg_id = add_message(text, image_path)
-        logger.info(f"Сообщение {msg_id} сохранено в БД (изображение: {image_path})")
-        print(f"Сообщение {msg_id} добавлено в очередь рассылки.")
+        logger.info(f"Message {msg_id} saved to DB (image: {image_path})")
+        print(f"Message {msg_id} added to broadcast queue.")
 
-        # Шаг 5: отправка всех неотправленных сообщений
+        # Step 5: send all unsent messages
         client = get_client()
-        # читаем список чатов
+        # read chat list
         chats = []
         with open(CHATS_CSV, encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
-                chats.append({'title': row['Название'], 'id': row['ИД']})
-        logger.info('Начало рассылки сообщений.')
+                chats.append({'title': row['Name'], 'id': int(row['ID'].strip())})
+        logger.info('Starting message broadcast.')
 
         for m_id, m_text, m_img in get_unsent_messages():
             for chat in chats:
@@ -94,13 +94,13 @@ def interactive_input():
                         client.loop.run_until_complete(
                             client.send_message(chat['id'], m_text)
                         )
-                    logger.info(f"Сообщение {m_id} отправлено в '{chat['title']}' ({chat['id']})")
+                    logger.info(f"Message {m_id} sent to '{chat['title']}' ({chat['id']})")
                 except Exception as e:
-                    logger.error(f"Ошибка при отправке {m_id} в '{chat['title']}': {e}")
+                    logger.error(f"Error sending {m_id} to '{chat['title']}': {e}")
             mark_sent(m_id)
-            logger.info(f"Сообщение {m_id} помечено как отправленное.")
+            logger.info(f"Message {m_id} marked as sent.")
 
-        print('Рассылка завершена.')
+        print('Broadcast finished.')
         sys.exit(0)
 
 if __name__ == '__main__':

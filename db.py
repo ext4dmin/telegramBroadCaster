@@ -4,7 +4,7 @@ from config import DB_PATH
 conn = sqlite3.connect(DB_PATH, check_same_thread=False)
 cursor = conn.cursor()
 
-# Создание таблицы сообщений
+# Create messages table
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS messages (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

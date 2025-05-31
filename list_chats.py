@@ -7,7 +7,7 @@ async def print_group_ids():
     await client.start()
     async for dialog in client.iter_dialogs():
         if dialog.is_group or dialog.is_channel:
-            title = dialog.title or '(без названия)'
+            title = dialog.title or '(no title)'
             chat_id = dialog.id
             print(f'{title}: {chat_id}')
 
