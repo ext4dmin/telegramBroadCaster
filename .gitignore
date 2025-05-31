@@ -1,3 +1,10 @@
+.vscode/
+*.session
+*.jpg
+*.jpeg
+*.png
+chats.csv
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -60,7 +67,9 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-
+*db*.sqlite
+db.sqlite-journal
+*.db
 # Flask stuff:
 instance/
 .webassets-cache
