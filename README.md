@@ -2,6 +2,9 @@
 
 [![CodeQL](https://github.com/ext4dmin/telegramBroadCaster/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/ext4dmin/telegramBroadCaster/actions/workflows/github-code-scanning/codeql)
 
+<img src="https://github.com/user-attachments/assets/a978087e-ef3c-489b-a270-5d23a205d5d3" alt="telegramBradCaster" width="500"/>
+
+
 ## Description
 telegramBroadCaster is a Python tool for broadcasting messages (with optional images) to multiple Telegram groups or channels. It uses Telethon and a local SQLite database to manage message queues and supports both interactive and automated (cron) operation. All configuration is handled via environment variables or a .env file.
 
